@@ -1,2 +1,2 @@
-# leetcode-c
-leetcode code in c
+# c-showcase
+c code showcase
