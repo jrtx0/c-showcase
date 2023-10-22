@@ -16,19 +16,18 @@ void moveZeroes(int* nums, int numsSize)
         return;
     }
 
-    for (int i = 0, k = zeroCnt, tail = numsSize - 1; i < numsSize; i++)
+    for (int i = 0, k = zeroCnt, t = numsSize - 1; i < numsSize; i++)
     {
+        // 遇到 0 就整体向前移动一次直到没有 0
         while (nums[i] == 0)
         {
-            if (k != 0)
+            if (k-- != 0)
             {
                 for (int j = i; j < numsSize - 1; j++)
                 {
                     nums[j] = nums[j + 1];
                 }
-                nums[tail] = 0;
-                tail--;
-                k--;
+                nums[t--] = 0;
             }
             else
             {
