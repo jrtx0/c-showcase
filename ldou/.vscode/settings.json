@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "*.C": "c",
-        "*.s": "arm",
-        "socket.h": "c"
-    }
-}
