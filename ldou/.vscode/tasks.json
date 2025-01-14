@@ -1,0 +1,60 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "server",
+            "command": "/usr/bin/gcc",
+            "args": [
+                "src/ldou.c",
+                "tests/server.c",
+                "-I",
+                "src",
+                "-g",
+                "-o",
+                "server"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "compiler: /usr/bin/gcc"
+        },
+        {
+            "type": "shell",
+            "label": "client",
+            "command": "/usr/bin/gcc",
+            "args": [
+                "src/ldou.c",
+                "tests/client.c",
+                "-I",
+                "src",
+                "-g",
+                "-o",
+                "client"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "compiler: /usr/bin/gcc"
+        },
+        {
+            "label": "build",
+            "dependsOn": [
+                "server",
+                "client"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
