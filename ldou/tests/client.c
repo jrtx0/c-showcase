@@ -9,7 +9,7 @@ int main() {
     int sockfd;
     struct sockaddr_in servaddr, cliaddr;
 
-    // 创建 UDP socket
+    // Create UDP socket
     sockfd = socket(AF_INET, SOCK_DGRAM, 0);
     if (sockfd < 0) {
         perror("Socket creation failed");
@@ -21,7 +21,7 @@ int main() {
     servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
     servaddr.sin_port = htons(12345);
 
-    // 构造 LDOU 数据包
+    // Construct LDOU packet
     ldou_packet_t packet;
     packet.flag = 0x1234;
     packet.len = 5;
@@ -31,7 +31,7 @@ int main() {
     packet.data[1] = 4;
     packet.sum = ldou_calculate_checksum(&packet);
 
-    // 构造发送缓冲区
+    // Construct send buffer
     uint8_t buffer[128] = {0};
     buffer[0] = (uint8_t)(packet.flag >> 8);
     buffer[1] = (uint8_t)(packet.flag & 0xFF);
@@ -41,7 +41,7 @@ int main() {
     memcpy(&buffer[5], packet.data, packet.len - 3);
     buffer[2 + packet.len] = packet.sum;
 
-    // 发送数据包
+    // Send packet
     ssize_t sent = sendto(sockfd, buffer, 3 + packet.len, 0, (const struct sockaddr *)&servaddr, sizeof(servaddr));
     if (sent < 0) {
         perror("Failed to send data");
@@ -51,7 +51,7 @@ int main() {
 
     printf("Packet sent successfully\n");
 
-    // 接收响应
+    // Receive response
     socklen_t len = sizeof(cliaddr);
     size_t n = recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&cliaddr, &len);
     if (n < 0) {

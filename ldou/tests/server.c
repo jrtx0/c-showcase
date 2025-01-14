@@ -2,15 +2,15 @@
 
 void example_command_handler(const ldou_packet_t *request, ldou_packet_t *response)
 {
-    printf("Received command: 0x%02X\n", request->cmd);
-    printf("Data length: %d\n", request->len - 3);
+    printf("received command: 0x%02X\n", request->cmd);
+    printf("data length: %d\n", request->len - 3);
 
     for (int i = 0; i < request-> len - 3; i++)
     {
         printf("Data[%d]: 0x%02X\n", i, request->data[i]);
     }
 
-    // 填充应答包
+    // Fill the response packet
     response->flag = LDOU_FLAG2;
     response->len = request->addr;
     response->cmd = request->cmd;
@@ -26,13 +26,13 @@ int main()
 
     if (ldou_init(bind_ip, port) != 0)
     {
-        printf("Failed to initialize LDOU protocol.\n");
+        printf("failed to initialize LDOU protocol.\n");
         return -1;
     }
 
     printf("LDOU protocol initialized. Waiting for commands on %s:%d...\n", bind_ip, port);
 
-    // 注册命令处理函数
+    // Register command handler function
     ldou_register_handler(example_command_handler);
 
     while (1)
@@ -44,27 +44,25 @@ int main()
 
         if (result == 0)
         {
-            printf("Packet received successfully.\n");
+            printf("packet received successfully.\n");
 
-            // 调用命令处理函数
+            // Call the command handler function
             command_handler(&request, &response);
             
-            if (ldou_send(&response))
+            if (ldou_send(&response) == 0)
             {
-                printf("Response sent successfully.\n");
+                printf("response sent successfully.\n");
             }
             else
             {
-                printf("Failed to send response.\n");
+                printf("failed to send response.\n");
             }
         }
         else
         {
-            printf("Error receiving packet: %d\n", result);
+            printf("error receiving packet: %d\n", result);
         }
     }
-
-    ldou_cleanup();
 
     return 0;
 }

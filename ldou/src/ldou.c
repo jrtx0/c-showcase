@@ -1,4 +1,6 @@
 #include "ldou.h"
+
+
 #include <stdio.h>
 #include <string.h>
 #include <arpa/inet.h>
@@ -11,7 +13,7 @@ static struct sockaddr_in remote_addr;
 ldou_handler_t command_handler = NULL;
 
 /**
- * @brief 计算校验和
+ * @brief Calculate checksum
  */
 uint8_t ldou_calculate_checksum(const ldou_packet_t *packet)
 {
@@ -32,13 +34,12 @@ uint8_t ldou_calculate_checksum(const ldou_packet_t *packet)
 }
 
 /**
- * @brief 初始化 LDOU 协议
+ * @brief Initialize LDOU protocol
  */
 int ldou_init(const char *bind_ip, uint16_t port)
 {
     if ((socket_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
-        perror("Socket creation failed");
         return -1;
     }
 
@@ -49,15 +50,14 @@ int ldou_init(const char *bind_ip, uint16_t port)
 
     if (bind(socket_fd, (const struct sockaddr *)&local_addr, sizeof(local_addr)) < 0)
     {
-        perror("Socket bind failed");
-        return -1;
+        return -2;
     }
 
     return 0;
 }
 
 /**
- * @brief 接收数据并解析为 LDOU 数据包
+ * @brief Receive data and parse it into an LDOU packet
  */
 int ldou_receive(ldou_packet_t *packet)
 {
@@ -68,7 +68,6 @@ int ldou_receive(ldou_packet_t *packet)
 
     if (received <= 0)
     {
-        perror("Failed to receive data");
         return -1;
     }
 
@@ -81,7 +80,7 @@ int ldou_receive(ldou_packet_t *packet)
 
     if (data_size > LDOU_MAX_DATA_SIZE)
     {
-        return -2; // 数据过长
+        return -2;
     }
 
     memcpy(packet->data, &buffer[5], data_size);
@@ -89,11 +88,11 @@ int ldou_receive(ldou_packet_t *packet)
 
     uint8_t calculated_sum = ldou_calculate_checksum(packet);
 
-    return (calculated_sum == packet->sum) ? 0 : -3; // 校验和错误
+    return (calculated_sum == packet->sum) ? 0 : -3;
 }
 
 /**
- * @brief 发送 LDOU 数据包
+ * @brief Send an LDOU packet
  */
 int ldou_send(const ldou_packet_t *packet)
 {
@@ -113,7 +112,6 @@ int ldou_send(const ldou_packet_t *packet)
 
     if (send <= 0)
     {
-        perror("Failed to send data");
         return -1;
     }
 
@@ -121,20 +119,9 @@ int ldou_send(const ldou_packet_t *packet)
 }
 
 /**
- * @brief 注册命令处理回调函数
+ * @brief Register command handler callback function
  */
 void ldou_register_handler(ldou_handler_t handler)
 {
     command_handler = handler;
-}
-
-/**
- * @brief 清理资源
- */
-void ldou_cleanup()
-{
-    if (socket_fd >= 0)
-    {
-        close(socket_fd);
-    }
 }
