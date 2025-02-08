@@ -1,4 +1,4 @@
-#include "ldou.h"
+#include "lcou.h"
 
 
 #include <stdio.h>
@@ -10,12 +10,12 @@
 static int socket_fd = -1;
 static struct sockaddr_in remote_addr;
 
-ldou_handler_t command_handler = NULL;
+lcou_handler_t command_handler = NULL;
 
 /**
  * @brief Calculate checksum
  */
-uint8_t ldou_calculate_checksum(const ldou_packet_t *packet)
+uint8_t lcou_calculate_checksum(const lcou_packet_t *packet)
 {
     uint8_t sum = 0;
 
@@ -34,9 +34,9 @@ uint8_t ldou_calculate_checksum(const ldou_packet_t *packet)
 }
 
 /**
- * @brief Initialize LDOU protocol
+ * @brief Initialize LCOU protocol
  */
-int ldou_init(const char *bind_ip, uint16_t port)
+int lcou_init(const char *bind_ip, uint16_t port)
 {
     if ((socket_fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
@@ -57,9 +57,9 @@ int ldou_init(const char *bind_ip, uint16_t port)
 }
 
 /**
- * @brief Receive data and parse it into an LDOU packet
+ * @brief Receive data and parse it into an LCOU packet
  */
-int ldou_receive(ldou_packet_t *packet)
+int lcou_receive(lcou_packet_t *packet)
 {
     uint8_t buffer[128] = {0};
     socklen_t addr_len = sizeof(remote_addr);
@@ -78,7 +78,7 @@ int ldou_receive(ldou_packet_t *packet)
 
     size_t data_size = packet->len - 3;
 
-    if (data_size > LDOU_MAX_DATA_SIZE)
+    if (data_size > LCOU_MAX_DATA_SIZE)
     {
         return -2;
     }
@@ -86,15 +86,15 @@ int ldou_receive(ldou_packet_t *packet)
     memcpy(packet->data, &buffer[5], data_size);
     packet->sum = buffer[2 + packet->len];
 
-    uint8_t calculated_sum = ldou_calculate_checksum(packet);
+    uint8_t calculated_sum = lcou_calculate_checksum(packet);
 
     return (calculated_sum == packet->sum) ? 0 : -3;
 }
 
 /**
- * @brief Send an LDOU packet
+ * @brief Send an LCOU packet
  */
-int ldou_send(const ldou_packet_t *packet)
+int lcou_send(const lcou_packet_t *packet)
 {
     uint8_t buffer[128] = {0};
 
@@ -121,7 +121,7 @@ int ldou_send(const ldou_packet_t *packet)
 /**
  * @brief Register command handler callback function
  */
-void ldou_register_handler(ldou_handler_t handler)
+void lcou_register_handler(lcou_handler_t handler)
 {
     command_handler = handler;
 }

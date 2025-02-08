@@ -1,6 +1,6 @@
-#include "ldou.h"
+#include "lcou.h"
 
-void example_command_handler(const ldou_packet_t *request, ldou_packet_t *response)
+void example_command_handler(const lcou_packet_t *request, lcou_packet_t *response)
 {
     printf("received command: 0x%02X\n", request->cmd);
     printf("data length: %d\n", request->len - 3);
@@ -16,7 +16,7 @@ void example_command_handler(const ldou_packet_t *request, ldou_packet_t *respon
     response->cmd = request->cmd;
     response->len = 4;
     response->data[0] = 0x00;
-    response->sum = ldou_calculate_checksum(response);
+    response->sum = lcou_calculate_checksum(response);
 }
 
 int main()
@@ -24,7 +24,7 @@ int main()
     const char *bind_ip = "0.0.0.0";
     uint16_t port = 12345;
 
-    if (ldou_init(bind_ip, port) != 0)
+    if (lcou_init(bind_ip, port) != 0)
     {
         printf("failed to initialize LDOU protocol.\n");
         return -1;
@@ -33,14 +33,14 @@ int main()
     printf("LDOU protocol initialized. Waiting for commands on %s:%d...\n", bind_ip, port);
 
     // Register command handler function
-    ldou_register_handler(example_command_handler);
+    lcou_register_handler(example_command_handler);
 
     while (1)
     {
-        ldou_packet_t request;
-        ldou_packet_t response;
+        lcou_packet_t request;
+        lcou_packet_t response;
 
-        int result = ldou_receive(&request);
+        int result = lcou_receive(&request);
 
         if (result == 0)
         {
@@ -49,7 +49,7 @@ int main()
             // Call the command handler function
             command_handler(&request, &response);
             
-            if (ldou_send(&response) == 0)
+            if (lcou_send(&response) == 0)
             {
                 printf("response sent successfully.\n");
             }
