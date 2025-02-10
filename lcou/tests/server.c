@@ -1,3 +1,4 @@
+#include "stdio.h"
 #include "lcou.h"
 
 void example_command_handler(const lcou_packet_t *request, lcou_packet_t *response)
