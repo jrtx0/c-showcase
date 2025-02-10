@@ -11,7 +11,7 @@ void example_command_handler(const lcou_packet_t *request, lcou_packet_t *respon
     }
 
     // Fill the response packet
-    response->flag = LDOU_FLAG2;
+    response->flag = LCOU_FLAG2;
     response->len = request->addr;
     response->cmd = request->cmd;
     response->len = 4;
@@ -26,11 +26,11 @@ int main()
 
     if (lcou_init(bind_ip, port) != 0)
     {
-        printf("failed to initialize LDOU protocol.\n");
+        printf("failed to initialize LCOU protocol.\n");
         return -1;
     }
 
-    printf("LDOU protocol initialized. Waiting for commands on %s:%d...\n", bind_ip, port);
+    printf("LCOU protocol initialized. Waiting for commands on %s:%d...\n", bind_ip, port);
 
     // Register command handler function
     lcou_register_handler(example_command_handler);

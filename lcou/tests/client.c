@@ -22,14 +22,14 @@ int main() {
     servaddr.sin_port = htons(12345);
 
     // Construct LDOU packet
-    ldou_packet_t packet;
+    lcou_packet_t packet;
     packet.flag = 0x1234;
     packet.len = 5;
     packet.addr = 1;
     packet.cmd = 2;
     packet.data[0] = 3;
     packet.data[1] = 4;
-    packet.sum = ldou_calculate_checksum(&packet);
+    packet.sum = lcou_calculate_checksum(&packet);
 
     // Construct send buffer
     uint8_t buffer[128] = {0};
